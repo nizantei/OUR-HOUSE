@@ -9,15 +9,40 @@ export function useCountdowns(livingRoomId: string | undefined) {
   const { user } = useAuthStore();
 
   useEffect(() => {
-    if (livingRoomId) {
-      fetchCountdowns();
-      setupRealtimeSubscription();
-    }
+    if (!livingRoomId) return;
+
+    fetchCountdowns();
+
+    const channel = supabase
+      .channel(`countdowns:${livingRoomId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'countdowns',
+          filter: `living_room_id=eq.${livingRoomId}`,
+        },
+        (payload) => {
+          addCountdown(payload.new as Countdown);
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'DELETE',
+          schema: 'public',
+          table: 'countdowns',
+          filter: `living_room_id=eq.${livingRoomId}`,
+        },
+        (payload) => {
+          removeCountdown(payload.old.id);
+        }
+      )
+      .subscribe();
 
     return () => {
-      if (livingRoomId) {
-        supabase.removeChannel(`countdowns:${livingRoomId}`);
-      }
+      supabase.removeChannel(channel);
     };
   }, [livingRoomId]);
 
@@ -80,41 +105,6 @@ export function useCountdowns(livingRoomId: string | undefined) {
     }
   };
 
-  const setupRealtimeSubscription = () => {
-    if (!livingRoomId) return;
-
-    const channel = supabase
-      .channel(`countdowns:${livingRoomId}`)
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'countdowns',
-          filter: `living_room_id=eq.${livingRoomId}`,
-        },
-        (payload) => {
-          addCountdown(payload.new as Countdown);
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: 'DELETE',
-          schema: 'public',
-          table: 'countdowns',
-          filter: `living_room_id=eq.${livingRoomId}`,
-        },
-        (payload) => {
-          removeCountdown(payload.old.id);
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  };
 
   return {
     countdowns,

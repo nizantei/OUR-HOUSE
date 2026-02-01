@@ -11,14 +11,31 @@ export function useFeaturedImage(livingRoomId: string | undefined) {
   const { user } = useAuthStore();
 
   useEffect(() => {
-    if (livingRoomId) {
-      setupRealtimeSubscription();
-    }
+    if (!livingRoomId) return;
+
+    const channel = supabase
+      .channel(`living_room:${livingRoomId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'living_rooms',
+          filter: `id=eq.${livingRoomId}`,
+        },
+        (payload) => {
+          const updated = payload.new as any;
+          updateFeaturedImage(
+            updated.featured_image_url,
+            updated.featured_image_uploaded_by,
+            updated.featured_image_uploaded_at
+          );
+        }
+      )
+      .subscribe();
 
     return () => {
-      if (livingRoomId) {
-        supabase.removeChannel(`living_room:${livingRoomId}`);
-      }
+      supabase.removeChannel(channel);
     };
   }, [livingRoomId]);
 
@@ -80,34 +97,6 @@ export function useFeaturedImage(livingRoomId: string | undefined) {
     }
   };
 
-  const setupRealtimeSubscription = () => {
-    if (!livingRoomId) return;
-
-    const channel = supabase
-      .channel(`living_room:${livingRoomId}`)
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'living_rooms',
-          filter: `id=eq.${livingRoomId}`,
-        },
-        (payload) => {
-          const updated = payload.new as any;
-          updateFeaturedImage(
-            updated.featured_image_url,
-            updated.featured_image_uploaded_by,
-            updated.featured_image_uploaded_at
-          );
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  };
 
   return {
     uploadFeaturedImage,

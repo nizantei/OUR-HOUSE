@@ -2,229 +2,189 @@
 
 A shared digital space for couples, built with React, Vite, and Supabase.
 
-## Structure
+## 🚀 Quick Start
 
-This is a **pnpm workspace monorepo** containing:
+### Start the Apps
 
-- **Main App** (`apps/main`) - The "Our House" app for regular users
-- **Admin Panel** (`apps/admin`) - Admin interface for managing users and houses
-- **Shared Package** (`packages/shared`) - Common types and utilities
+**Double-click these files:**
+- `start-admin.bat` - Admin panel (http://localhost:5174)
+- `start-main.bat` - Main app (http://localhost:5173)
 
-## Quick Start
+**Or use commands:**
+```bash
+pnpm dev:admin    # Admin panel
+pnpm dev:main     # Main app
+```
 
-### Prerequisites
-- Node.js 18+
-- pnpm (`npm install -g pnpm`)
-- Supabase account
-- Vercel account (for deployment)
+### First Time Setup
 
-### Installation
+1. **Install dependencies:**
+   ```bash
+   pnpm install
+   ```
+
+2. **Add Supabase credentials** to both:
+   - `apps/main/.env.local`
+   - `apps/admin/.env.local`
+
+3. **Run SQL setup** in Supabase:
+   - Open `sql/fix-rls-policies.sql`
+   - Run in Supabase SQL Editor
+
+4. **Start the admin panel:**
+   ```bash
+   pnpm dev:admin
+   ```
+
+📖 **Detailed setup:** See `docs/QUICK_START.md`
+
+---
+
+## 📁 Project Structure
+
+```
+OUR-HOUSE/
+├── apps/
+│   ├── main/           # Main user app
+│   └── admin/          # Admin panel
+├── packages/
+│   └── shared/         # Shared code (types, Supabase client)
+├── docs/               # All documentation
+├── scripts/            # Additional start scripts
+├── sql/                # Database setup files
+├── README.md           # This file
+├── start-admin.bat     # Quick start admin
+└── start-main.bat      # Quick start main app
+```
+
+---
+
+## 📚 Documentation
+
+All guides are in the `docs/` folder:
+
+- **`docs/QUICK_START.md`** - Fast setup guide
+- **`docs/ADMIN_QUICK_START.md`** - Admin panel setup
+- **`docs/ENV_SETUP_GUIDE.md`** - Environment variables
+- **`docs/DEPLOYMENT_CHECKLIST.md`** - Deploy to Vercel
+- **`docs/IMPLEMENTATION_SUMMARY.md`** - What was built
+
+---
+
+## 🗄️ SQL Files
+
+Database setup files in `sql/` folder:
+
+- **`sql/fix-rls-policies.sql`** - ⭐ Run this to fix infinite recursion
+- `sql/supabase_schema.sql` - Full database schema
+- `sql/supabase_admin_setup.sql` - Initial admin setup
+
+---
+
+## 🛠️ Development
+
+### Install Dependencies
 ```bash
 pnpm install
 ```
 
-### Development
-
-**Quick Start (Windows):**
-- Double-click `start-admin.bat` - Start admin panel only
-- Double-click `start-main.bat` - Start main app only
-- Double-click `start-both.bat` - Start both apps
-- Double-click `START.bat` - Menu to choose
-
-**Command Line:**
+### Start Apps
 ```bash
-# Start main app (http://localhost:5173)
-pnpm dev:main
-
-# Start admin panel (http://localhost:5174)
-pnpm dev:admin
+pnpm dev:admin     # Admin panel (port 5174)
+pnpm dev:main      # Main app (port 5173)
 ```
 
-### Building
+### Build
 ```bash
-# Build main app
-pnpm build:main
-
-# Build admin panel
-pnpm build:admin
-
-# Build all
-pnpm build:all
+pnpm build:admin   # Build admin panel
+pnpm build:main    # Build main app
+pnpm build:all     # Build both
 ```
 
-## Documentation
+---
 
-- **[DEPLOYMENT_CHECKLIST.md](./DEPLOYMENT_CHECKLIST.md)** - Step-by-step deployment guide
-- **[ADMIN_SETUP.md](./ADMIN_SETUP.md)** - Detailed admin panel setup
-- **[IMPLEMENTATION_SUMMARY.md](./IMPLEMENTATION_SUMMARY.md)** - What was implemented
-- **[admin_rls_policies.sql](./admin_rls_policies.sql)** - Database policies to apply
-
-## Setup Guide
-
-### 1. Environment Variables
-Create `.env.local` in both `apps/main` and `apps/admin`:
-```env
-VITE_SUPABASE_URL=your_supabase_url
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-```
-
-### 2. Database Setup
-Run the SQL commands in `admin_rls_policies.sql` in your Supabase SQL Editor.
-
-### 3. Set Admin Status
-```sql
-UPDATE users SET is_admin = true WHERE email = 'your-email@gmail.com';
-```
-
-### 4. Deploy
-Follow the steps in [DEPLOYMENT_CHECKLIST.md](./DEPLOYMENT_CHECKLIST.md)
-
-## Apps
+## 🎯 Apps Overview
 
 ### Main App (`apps/main`)
-The primary user-facing application where couples can:
-- Create or join a shared house
-- Access shared rooms (Living Room, Kitchen, Garden, Gallery, Bedroom, Private Rooms)
-- Interact with shared content
-
-**Tech Stack:**
-- React 19
-- Vite 7
-- TypeScript
-- Tailwind CSS
-- Zustand (state management)
-- Supabase (auth + database)
+User-facing app for couples:
+- Create/join shared house
+- Access shared rooms
+- Google OAuth authentication
 
 ### Admin Panel (`apps/admin`)
-Administrative interface for managing the platform:
+Management interface:
 - View all users and houses
 - Toggle admin privileges
 - Delete users/houses
-- View platform statistics
+- Platform statistics
 
-**Tech Stack:**
-- React 19
-- Vite 7
-- TypeScript
-- Tailwind CSS
-- Zustand (state management)
-- Supabase (auth + database)
+---
 
-**Security:**
-- Access controlled via `is_admin` flag in database
-- RLS policies enforce permissions
-- Metadata-only access (no room content)
+## 🔧 Tech Stack
 
-## Shared Package (`packages/shared`)
+- **Frontend:** React 19, TypeScript, Vite
+- **Styling:** Tailwind CSS
+- **State:** Zustand
+- **Database:** Supabase (PostgreSQL)
+- **Auth:** Supabase Auth (Google OAuth)
+- **Deployment:** Vercel
 
-Common code shared between apps:
-- Database types (`User`, `House`, etc.)
-- Supabase client configuration
-- Utility functions
+---
 
-## Available Scripts
+## 🚨 Troubleshooting
+
+### White page / No data loading
+- Make sure `.env.local` files have Supabase credentials
+- See `docs/ENV_SETUP_GUIDE.md`
+
+### Infinite recursion error
+- Run `sql/fix-rls-policies.sql` in Supabase SQL Editor
+- See `docs/FIX_INFINITE_RECURSION.md`
+
+### Can't sign in
+- Check Supabase OAuth is configured
+- Make sure you ran the SQL setup
+
+---
+
+## 📝 Quick Commands
+
+| Command | Description |
+|---------|-------------|
+| `pnpm install` | Install all dependencies |
+| `pnpm dev:admin` | Start admin panel |
+| `pnpm dev:main` | Start main app |
+| `pnpm build:all` | Build both apps |
+
+---
+
+## 🔗 Links
+
+- **GitHub:** https://github.com/nizantei/OUR-HOUSE
+- **Supabase:** https://app.supabase.com
+- **Documentation:** `docs/` folder
+
+---
+
+## 📦 Package Management
+
+This is a pnpm workspace monorepo. To run commands in specific packages:
 
 ```bash
-# Development
-pnpm dev:main          # Start main app
-pnpm dev:admin         # Start admin panel
-
-# Building
-pnpm build:main        # Build main app
-pnpm build:admin       # Build admin panel
-pnpm build:all         # Build all apps
-
-# Filtering commands to specific packages
-pnpm --filter @our-house/main <command>
 pnpm --filter @our-house/admin <command>
+pnpm --filter @our-house/main <command>
 pnpm --filter @our-house/shared <command>
 ```
 
-## Project Architecture
+---
 
-```
-OUR HOUSE/
-├── apps/
-│   ├── main/                    # Main user app
-│   │   ├── src/
-│   │   ├── package.json
-│   │   └── vercel.json
-│   │
-│   └── admin/                   # Admin panel
-│       ├── src/
-│       ├── package.json
-│       └── vercel.json
-│
-├── packages/
-│   └── shared/                  # Shared code
-│       ├── src/
-│       │   ├── lib/
-│       │   └── types/
-│       └── package.json
-│
-├── pnpm-workspace.yaml          # Workspace config
-├── package.json                 # Root package
-└── admin_rls_policies.sql       # Database policies
-```
+## 🎉 Getting Help
 
-## Deployment
+1. Check `docs/QUICK_START.md` for setup
+2. Check `docs/` folder for detailed guides
+3. Check console errors for specific issues
+4. Review `sql/fix-rls-policies.sql` for database issues
 
-Both apps are configured for Vercel deployment:
+---
 
-### Main App
-- Root directory: `apps/main`
-- Build command: `cd ../.. && pnpm install && pnpm build:main`
-- Output directory: `dist`
-
-### Admin Panel
-- Root directory: `apps/admin`
-- Build command: `cd ../.. && pnpm install && pnpm build:admin`
-- Output directory: `dist`
-
-See [DEPLOYMENT_CHECKLIST.md](./DEPLOYMENT_CHECKLIST.md) for detailed deployment steps.
-
-## Environment Variables
-
-Both apps require:
-- `VITE_SUPABASE_URL` - Your Supabase project URL
-- `VITE_SUPABASE_ANON_KEY` - Your Supabase anonymous key
-
-## Database Schema
-
-The app uses Supabase with PostgreSQL. Schema defined in `supabase_schema.sql`.
-
-Key tables:
-- `users` - User accounts
-- `houses` - Shared houses
-- `living_rooms`, `kitchens`, `gardens`, `galleries`, `bedrooms`, `private_rooms` - Room types
-- Content tables for each room type
-
-## Admin Features
-
-The admin panel provides:
-- **Dashboard**: Platform statistics (total users, houses, recent signups)
-- **User Management**: View, edit admin status, delete users
-- **House Management**: View houses with user relationships, delete houses
-
-## Security
-
-- Authentication via Supabase Auth (Google OAuth)
-- Row Level Security (RLS) policies enforce permissions
-- Admin access verified at database level
-- Separate deployments for main and admin apps
-- Admin panel has no access to user content (only metadata)
-
-## Contributing
-
-This is a personal project for couples. Not accepting external contributions.
-
-## License
-
-Private - All rights reserved
-
-## Support
-
-For setup help, refer to:
-- [DEPLOYMENT_CHECKLIST.md](./DEPLOYMENT_CHECKLIST.md)
-- [ADMIN_SETUP.md](./ADMIN_SETUP.md)
-- [IMPLEMENTATION_SUMMARY.md](./IMPLEMENTATION_SUMMARY.md)
+**Built with ❤️ for couples**

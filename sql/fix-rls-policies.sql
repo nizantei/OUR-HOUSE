@@ -3,15 +3,21 @@
 -- Run this in Supabase SQL Editor
 -- =====================================================
 
--- First, drop the problematic policies
+-- Drop ALL existing policies to start fresh
 DROP POLICY IF EXISTS "Admins can read all users" ON users;
 DROP POLICY IF EXISTS "Admins can update users" ON users;
 DROP POLICY IF EXISTS "Admins can delete users" ON users;
+DROP POLICY IF EXISTS "Users can read own profile" ON users;
+DROP POLICY IF EXISTS "Users can update own profile" ON users;
+
 DROP POLICY IF EXISTS "Admins can read all houses" ON houses;
 DROP POLICY IF EXISTS "Admins can manage houses" ON houses;
+DROP POLICY IF EXISTS "Admins can delete houses" ON houses;
+DROP POLICY IF EXISTS "Admins can update houses" ON houses;
+DROP POLICY IF EXISTS "Users can read own houses" ON houses;
 
 -- =====================================================
--- FIXED POLICIES (No Infinite Recursion)
+-- USERS TABLE POLICIES (Fixed - No Infinite Recursion)
 -- =====================================================
 
 -- Allow users to read their own profile (prevents recursion)
@@ -24,7 +30,7 @@ CREATE POLICY "Users can update own profile" ON users
   FOR UPDATE
   USING (auth.uid()::uuid = id);
 
--- Allow admins to read all users (using JWT claim, not table lookup)
+-- Allow admins to read all users
 CREATE POLICY "Admins can read all users" ON users
   FOR SELECT
   USING (
@@ -32,10 +38,7 @@ CREATE POLICY "Admins can read all users" ON users
     auth.uid()::uuid = id
     OR
     -- Then check if current user's record has is_admin = true
-    -- This works because "Users can read own profile" policy allows reading own record
-    (
-      SELECT is_admin FROM users WHERE id = auth.uid()::uuid
-    ) = true
+    (SELECT is_admin FROM users WHERE id = auth.uid()::uuid) = true
   );
 
 -- Allow admins to update any user
@@ -55,7 +58,7 @@ CREATE POLICY "Admins can delete users" ON users
   );
 
 -- =====================================================
--- HOUSES POLICIES
+-- HOUSES TABLE POLICIES
 -- =====================================================
 
 -- Users can read houses they're part of
@@ -92,10 +95,9 @@ CREATE POLICY "Admins can update houses" ON houses
   );
 
 -- =====================================================
--- Keep the auto-admin trigger
+-- AUTO-ADMIN TRIGGER
 -- =====================================================
 
--- This should already exist from previous setup, but just in case:
 CREATE OR REPLACE FUNCTION auto_grant_admin()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -113,13 +115,13 @@ CREATE TRIGGER auto_grant_admin_trigger
   EXECUTE FUNCTION auto_grant_admin();
 
 -- =====================================================
--- Set your account as admin (just in case)
+-- SET ADMIN STATUS
 -- =====================================================
 
 UPDATE users SET is_admin = true WHERE email = 'nizantei@gmail.com';
 
 -- =====================================================
--- VERIFICATION
+-- VERIFICATION (Optional - check results)
 -- =====================================================
 
 -- Check policies

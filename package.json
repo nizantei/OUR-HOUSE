@@ -1,0 +1,12 @@
+{
+  "name": "our-house-monorepo",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev:main": "pnpm --filter @our-house/main dev",
+    "dev:admin": "pnpm --filter @our-house/admin dev",
+    "build:main": "pnpm --filter @our-house/main build",
+    "build:admin": "pnpm --filter @our-house/admin build",
+    "build:all": "pnpm --filter \"@our-house/*\" build"
+  }
+}

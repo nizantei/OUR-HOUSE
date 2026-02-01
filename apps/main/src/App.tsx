@@ -4,6 +4,7 @@ import { Login } from './pages/Login';
 import { AuthCallback } from './pages/AuthCallback';
 import { Onboarding } from './pages/Onboarding';
 import { Home } from './pages/Home';
+import { LivingRoom } from './pages/LivingRoom';
 
 function App() {
   const { user, loading } = useAuth();
@@ -30,6 +31,10 @@ function App() {
         <Route
           path="/onboarding"
           element={user ? <Onboarding /> : <Navigate to="/login" replace />}
+        />
+        <Route
+          path="/living-room"
+          element={user ? <LivingRoom /> : <Navigate to="/login" replace />}
         />
         <Route
           path="/"

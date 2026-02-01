@@ -10,8 +10,12 @@ export function Home() {
   const { signOut } = useAuth();
 
   useEffect(() => {
-    if (!houseLoading && !house) {
-      navigate('/onboarding', { replace: true });
+    if (!houseLoading) {
+      if (!house) {
+        navigate('/onboarding', { replace: true });
+      } else {
+        navigate('/living-room', { replace: true });
+      }
     }
   }, [house, houseLoading, navigate]);
 

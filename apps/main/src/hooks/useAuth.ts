@@ -1,13 +1,14 @@
 import { useEffect } from 'react';
 import { supabase } from '@our-house/shared/lib/supabase';
 import { useAuthStore } from '../store/authStore';
+import type { AuthChangeEvent, Session } from '@supabase/supabase-js';
 
 export function useAuth() {
   const { user, supabaseUser, loading, setUser, setSupabaseUser, setLoading } = useAuthStore();
 
   useEffect(() => {
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session } }: { data: { session: Session | null } }) => {
       setSupabaseUser(session?.user ?? null);
       if (session?.user) {
         fetchUserProfile(session.user.id);
@@ -19,7 +20,7 @@ export function useAuth() {
     // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, session: Session | null) => {
       setSupabaseUser(session?.user ?? null);
       if (session?.user) {
         fetchUserProfile(session.user.id);

@@ -6,13 +6,14 @@ import { useLivingRoomStore } from '../store/livingRoomStore';
 import { useCountdowns } from '../hooks/useCountdowns';
 import { useFeaturedImage } from '../hooks/useFeaturedImage';
 import { useAuth } from '../hooks/useAuth';
-import type { LivingRoom as LivingRoomType, User } from '@our-house/shared/types';
+import type { LivingRoom as LivingRoomType } from '@our-house/shared/types';
 import { Button } from '../components/ui/Button';
-import { CountdownCard } from '../components/livingroom/CountdownCard';
-import { CountdownForm } from '../components/livingroom/CountdownForm';
-import { FeaturedImage } from '../components/livingroom/FeaturedImage';
+import { RoomContainer } from '../components/rooms/core/RoomContainer';
+import { LivingRoomScene } from '../components/rooms/livingroom/LivingRoomScene';
+import { Modal } from '../components/rooms/shared/Modal';
 import { ImageUpload } from '../components/livingroom/ImageUpload';
-import { RoomNavigation } from '../components/livingroom/RoomNavigation';
+import { CountdownForm } from '../components/livingroom/CountdownForm';
+import { CountdownCard } from '../components/livingroom/CountdownCard';
 
 export function LivingRoom() {
   const navigate = useNavigate();
@@ -21,10 +22,6 @@ export function LivingRoom() {
   const { signOut } = useAuth();
   const [showCountdownForm, setShowCountdownForm] = useState(false);
   const [showImageUpload, setShowImageUpload] = useState(false);
-  const [users, setUsers] = useState<{ user1: User | null; user2: User | null }>({
-    user1: null,
-    user2: null,
-  });
 
   const { countdowns, createCountdown, deleteCountdown } = useCountdowns(livingRoom?.id);
   const { uploadFeaturedImage } = useFeaturedImage(livingRoom?.id);
@@ -32,7 +29,6 @@ export function LivingRoom() {
   useEffect(() => {
     if (house) {
       fetchLivingRoom();
-      fetchUsers();
     }
   }, [house]);
 
@@ -54,35 +50,6 @@ export function LivingRoom() {
       console.error('Error fetching living room:', error);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const fetchUsers = async () => {
-    if (!house) return;
-
-    try {
-      const { data: user1Data } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', house.user_1)
-        .single();
-
-      let user2Data = null;
-      if (house.user_2) {
-        const { data } = await supabase
-          .from('users')
-          .select('*')
-          .eq('id', house.user_2)
-          .single();
-        user2Data = data;
-      }
-
-      setUsers({
-        user1: user1Data as User | null,
-        user2: user2Data as User | null,
-      });
-    } catch (error) {
-      console.error('Error fetching users:', error);
     }
   };
 
@@ -123,98 +90,72 @@ export function LivingRoom() {
   }
 
   return (
-    <div className="min-h-screen bg-warmth-50">
-      <div className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8 animate-appear">
-          <h1 className="font-decorative text-4xl text-warmth-900">
-            Living Room
-          </h1>
-          <Button onClick={handleSignOut} variant="outline" size="sm">
-            Sign Out
-          </Button>
-        </div>
-
-        {error && (
-          <div className="bg-error bg-opacity-10 border border-error text-error px-4 py-3 rounded-lg mb-6 text-sm animate-appear">
-            {error}
-          </div>
-        )}
-
-        <div className="max-w-6xl mx-auto space-y-8">
-          {/* Featured Image Section */}
-          <section className="animate-appear">
-            <h2 className="font-decorative text-2xl text-warmth-900 mb-4">
-              Featured Image
-            </h2>
-            {showImageUpload ? (
-              <ImageUpload
-                onUpload={handleUploadImage}
-                onCancel={() => setShowImageUpload(false)}
-              />
-            ) : (
-              <FeaturedImage
-                livingRoom={livingRoom}
-                users={users}
-                onChangeImage={() => setShowImageUpload(true)}
-              />
-            )}
-          </section>
-
-          {/* Countdowns Section */}
-          <section className="animate-appear" style={{ animationDelay: '0.1s' }}>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="font-decorative text-2xl text-warmth-900">
-                Countdowns
-              </h2>
-              {!showCountdownForm && (
-                <Button
-                  onClick={() => setShowCountdownForm(true)}
-                  size="sm"
-                >
-                  New Countdown
-                </Button>
-              )}
-            </div>
-
-            {showCountdownForm && (
-              <div className="mb-6">
-                <CountdownForm
-                  onSubmit={handleCreateCountdown}
-                  onCancel={() => setShowCountdownForm(false)}
-                />
-              </div>
-            )}
-
-            {countdowns.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {countdowns.map((countdown) => (
-                  <CountdownCard
-                    key={countdown.id}
-                    countdown={countdown}
-                    onDelete={deleteCountdown}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="bg-warmth-100 rounded-lg shadow-soft p-8 text-center border border-warmth-200">
-                <div className="text-4xl mb-3">⏰</div>
-                <p className="text-warmth-600">
-                  No countdowns yet. Create one to mark a special date!
-                </p>
-              </div>
-            )}
-          </section>
-
-          {/* Room Navigation Section */}
-          <section className="animate-appear" style={{ animationDelay: '0.2s' }}>
-            <h2 className="font-decorative text-2xl text-warmth-900 mb-4">
-              Other Rooms
-            </h2>
-            <RoomNavigation />
-          </section>
-        </div>
+    <RoomContainer>
+      {/* Header - floating at top */}
+      <div className="absolute top-4 left-4 right-4 z-10 flex items-center justify-between animate-appear">
+        <h1 className="font-decorative text-3xl text-warmth-900 drop-shadow-sm">
+          Living Room
+        </h1>
+        <Button onClick={handleSignOut} variant="outline" size="sm">
+          Sign Out
+        </Button>
       </div>
-    </div>
+
+      {/* Error message */}
+      {error && (
+        <div className="absolute top-20 left-4 right-4 z-10 bg-error bg-opacity-10 border border-error text-error px-4 py-3 rounded-lg text-sm animate-appear">
+          {error}
+        </div>
+      )}
+
+      {/* Room Scene */}
+      <LivingRoomScene
+        featuredImageUrl={livingRoom.featured_image_url}
+        countdowns={countdowns}
+        onPictureFrameClick={() => setShowImageUpload(true)}
+        onCalendarClick={() => setShowCountdownForm(true)}
+      />
+
+      {/* Image Upload Modal */}
+      {showImageUpload && (
+        <Modal onClose={() => setShowImageUpload(false)} title="Upload Featured Image">
+          <ImageUpload
+            onUpload={handleUploadImage}
+            onCancel={() => setShowImageUpload(false)}
+          />
+        </Modal>
+      )}
+
+      {/* Countdown Management Modal */}
+      {showCountdownForm && (
+        <Modal onClose={() => setShowCountdownForm(false)} title="Manage Countdowns">
+          <div className="space-y-6">
+            {/* Countdown Form */}
+            <CountdownForm
+              onSubmit={handleCreateCountdown}
+              onCancel={() => setShowCountdownForm(false)}
+            />
+
+            {/* Existing Countdowns */}
+            {countdowns.length > 0 && (
+              <div>
+                <h3 className="font-decorative text-lg text-warmth-900 mb-3">
+                  Your Countdowns
+                </h3>
+                <div className="grid grid-cols-1 gap-3">
+                  {countdowns.map((countdown) => (
+                    <CountdownCard
+                      key={countdown.id}
+                      countdown={countdown}
+                      onDelete={deleteCountdown}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </Modal>
+      )}
+    </RoomContainer>
   );
 }

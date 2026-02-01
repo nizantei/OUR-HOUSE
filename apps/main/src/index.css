@@ -272,3 +272,31 @@ input[type="number"] {
   height: 40px;
   animation: spin 0.8s linear infinite;
 }
+
+/* Breathing animation for plants and ambient elements */
+@keyframes breathe {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+.animate-breathe {
+  animation: breathe 4s ease-in-out infinite;
+}
+
+/* Floating animation for empty frames and decorative elements */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}

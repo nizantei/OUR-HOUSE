@@ -24,6 +24,14 @@ pnpm install
 ```
 
 ### Development
+
+**Quick Start (Windows):**
+- Double-click `start-admin.bat` - Start admin panel only
+- Double-click `start-main.bat` - Start main app only
+- Double-click `start-both.bat` - Start both apps
+- Double-click `START.bat` - Menu to choose
+
+**Command Line:**
 ```bash
 # Start main app (http://localhost:5173)
 pnpm dev:main

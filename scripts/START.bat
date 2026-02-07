@@ -6,7 +6,7 @@ echo ====================================
 echo.
 echo Choose what to start:
 echo.
-echo 1. Main App (User app - port 5173)
+echo 1. Main App (port 5173)
 echo 2. Admin Panel (port 5174)
 echo 3. Both (Main + Admin)
 echo.
@@ -22,26 +22,30 @@ exit
 :main
 echo.
 echo Starting Main App...
-echo URL: http://localhost:5173
+echo   Local:   http://localhost:5173
+echo   Phone:   Check terminal for Network URL
 echo.
+cd /d "%~dp0\.."
 pnpm dev:main
 goto end
 
 :admin
 echo.
 echo Starting Admin Panel...
-echo URL: http://localhost:5174
+echo   Local:   http://localhost:5174
 echo.
+cd /d "%~dp0\.."
 pnpm dev:admin
 goto end
 
 :both
 echo.
 echo Starting Both Apps...
-echo Main App: http://localhost:5173
-echo Admin Panel: http://localhost:5174
+echo   Main App:    http://localhost:5173
+echo   Admin Panel: http://localhost:5174
+echo   Phone:       Check terminal for Network URL
 echo.
-echo Opening two terminals...
+cd /d "%~dp0\.."
 start "Our House - Main App" cmd /k "pnpm dev:main"
 start "Our House - Admin Panel" cmd /k "pnpm dev:admin"
 goto end

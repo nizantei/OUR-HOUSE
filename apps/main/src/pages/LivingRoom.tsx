@@ -89,26 +89,49 @@ export function LivingRoom() {
     );
   }
 
-  return (
-    <RoomContainer>
-      {/* Header - floating at top */}
-      <div className="absolute top-4 left-4 right-4 z-10 flex items-center justify-between animate-appear">
-        <h1 className="font-decorative text-3xl text-warmth-900 drop-shadow-sm">
-          Living Room
-        </h1>
+  const bottomPanel = (
+    <div className="space-y-4 animate-appear">
+      <div className="flex items-center justify-between">
+        <h1 className="font-decorative text-2xl text-warmth-900">Living Room</h1>
         <Button onClick={handleSignOut} variant="outline" size="sm">
           Sign Out
         </Button>
       </div>
 
-      {/* Error message */}
       {error && (
-        <div className="absolute top-20 left-4 right-4 z-10 bg-error bg-opacity-10 border border-error text-error px-4 py-3 rounded-lg text-sm animate-appear">
+        <div className="bg-error bg-opacity-10 border border-error text-error px-4 py-3 rounded-lg text-sm">
           {error}
         </div>
       )}
 
-      {/* Room Scene */}
+      <div className="flex gap-3">
+        <Button onClick={() => setShowImageUpload(true)} variant="primary" size="sm">
+          Upload Photo
+        </Button>
+        <Button onClick={() => setShowCountdownForm(true)} variant="outline" size="sm">
+          Add Countdown
+        </Button>
+      </div>
+
+      {countdowns.length > 0 && (
+        <div>
+          <h3 className="font-decorative text-lg text-warmth-900 mb-2">Countdowns</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {countdowns.map((countdown) => (
+              <CountdownCard
+                key={countdown.id}
+                countdown={countdown}
+                onDelete={deleteCountdown}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
+  return (
+    <RoomContainer bottomPanel={bottomPanel}>
       <LivingRoomScene
         featuredImageUrl={livingRoom.featured_image_url}
         countdowns={countdowns}
@@ -116,7 +139,6 @@ export function LivingRoom() {
         onCalendarClick={() => setShowCountdownForm(true)}
       />
 
-      {/* Image Upload Modal */}
       {showImageUpload && (
         <Modal onClose={() => setShowImageUpload(false)} title="Upload Featured Image">
           <ImageUpload
@@ -126,17 +148,13 @@ export function LivingRoom() {
         </Modal>
       )}
 
-      {/* Countdown Management Modal */}
       {showCountdownForm && (
         <Modal onClose={() => setShowCountdownForm(false)} title="Manage Countdowns">
           <div className="space-y-6">
-            {/* Countdown Form */}
             <CountdownForm
               onSubmit={handleCreateCountdown}
               onCancel={() => setShowCountdownForm(false)}
             />
-
-            {/* Existing Countdowns */}
             {countdowns.length > 0 && (
               <div>
                 <h3 className="font-decorative text-lg text-warmth-900 mb-3">

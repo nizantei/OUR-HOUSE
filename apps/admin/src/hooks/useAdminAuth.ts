@@ -7,7 +7,6 @@ export function useAdminAuth() {
   const { user, supabaseUser, loading, setUser, setSupabaseUser, setLoading, reset } = useAuthStore();
 
   useEffect(() => {
-    // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSupabaseUser(session?.user ?? null);
       if (session?.user) {
@@ -17,7 +16,6 @@ export function useAdminAuth() {
       }
     });
 
-    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSupabaseUser(session?.user ?? null);
       if (session?.user) {
@@ -58,6 +56,12 @@ export function useAdminAuth() {
     if (error) console.error('Error signing in:', error);
   }
 
+  async function signInWithEmail(email: string, password: string) {
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+    return data;
+  }
+
   async function signOut() {
     await supabase.auth.signOut();
     reset();
@@ -65,5 +69,5 @@ export function useAdminAuth() {
 
   const isAdmin = user?.is_admin === true;
 
-  return { user, supabaseUser, loading, isAdmin, signInWithGoogle, signOut };
+  return { user, supabaseUser, loading, isAdmin, signInWithGoogle, signInWithEmail, signOut };
 }

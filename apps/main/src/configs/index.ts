@@ -1,0 +1,13 @@
+export type { SVGElementConfig, RoomColors, BaseRoomConfig } from './types';
+export { livingRoomConfig } from './livingRoom.config';
+export type { LivingRoomConfig } from './livingRoom.config';
+export { kitchenConfig } from './kitchen.config';
+export type { KitchenConfig } from './kitchen.config';
+export { gardenConfig } from './garden.config';
+export type { GardenConfig } from './garden.config';
+export { galleryConfig } from './gallery.config';
+export type { GalleryConfig } from './gallery.config';
+export { bedroomConfig } from './bedroom.config';
+export type { BedroomConfig } from './bedroom.config';
+export { privateRoomConfig } from './privateRoom.config';
+export type { PrivateRoomConfig } from './privateRoom.config';

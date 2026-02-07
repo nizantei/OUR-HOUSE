@@ -11,11 +11,11 @@ interface Room {
 
 const rooms: Room[] = [
   { name: 'Living Room', icon: '🛋️', route: '/living-room', active: true, color: 'var(--living-room)' },
-  { name: 'Kitchen', icon: '🍳', route: '/kitchen', active: false, color: 'var(--kitchen)' },
-  { name: 'Garden', icon: '🌱', route: '/garden', active: false, color: 'var(--garden)' },
-  { name: 'Gallery', icon: '🖼️', route: '/gallery', active: false, color: 'var(--gallery)' },
-  { name: 'Bedroom', icon: '💝', route: '/bedroom', active: false, color: 'var(--bedroom)' },
-  { name: 'Private Room', icon: '🚪', route: '/private-room', active: false, color: 'var(--private-room)' },
+  { name: 'Kitchen', icon: '🍳', route: '/kitchen', active: true, color: 'var(--kitchen)' },
+  { name: 'Garden', icon: '🌱', route: '/garden', active: true, color: 'var(--garden)' },
+  { name: 'Gallery', icon: '🖼️', route: '/gallery', active: true, color: 'var(--gallery)' },
+  { name: 'Bedroom', icon: '💝', route: '/bedroom', active: true, color: 'var(--bedroom)' },
+  { name: 'Private Room', icon: '🚪', route: '/private-room', active: true, color: 'var(--private-room)' },
 ];
 
 export function RoomNavMenu() {

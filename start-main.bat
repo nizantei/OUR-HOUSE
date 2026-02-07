@@ -1,3 +1,0 @@
-@echo off
-echo Starting Main App...
-pnpm dev:main

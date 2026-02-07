@@ -7,7 +7,6 @@ export function useAuth() {
   const { user, supabaseUser, loading, setUser, setSupabaseUser, setLoading } = useAuthStore();
 
   useEffect(() => {
-    // Get initial session
     supabase.auth.getSession().then(({ data: { session } }: { data: { session: Session | null } }) => {
       setSupabaseUser(session?.user ?? null);
       if (session?.user) {
@@ -17,7 +16,6 @@ export function useAuth() {
       }
     });
 
-    // Listen for auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, session: Session | null) => {
@@ -66,6 +64,60 @@ export function useAuth() {
     }
   };
 
+  const signInWithEmail = async (email: string, password: string) => {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) throw error;
+
+    if (data.user) {
+      // Ensure user profile exists in our users table
+      await ensureUserProfile(data.user);
+    }
+
+    return data;
+  };
+
+  const signUpWithEmail = async (email: string, password: string, displayName: string) => {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { display_name: displayName },
+      },
+    });
+
+    if (error) throw error;
+
+    if (data.user) {
+      await ensureUserProfile(data.user, displayName);
+    }
+
+    return data;
+  };
+
+  const ensureUserProfile = async (authUser: any, displayName?: string) => {
+    const name = displayName || authUser.user_metadata?.display_name || authUser.email?.split('@')[0] || 'User';
+    const { error } = await supabase
+      .from('users')
+      .upsert({
+        id: authUser.id,
+        google_id: authUser.user_metadata?.sub || authUser.id,
+        email: authUser.email!,
+        display_name: name,
+        profile_picture: authUser.user_metadata?.avatar_url || null,
+        last_active: new Date().toISOString(),
+      }, {
+        onConflict: 'id',
+      });
+
+    if (error) {
+      console.error('Error ensuring user profile:', error);
+    }
+  };
+
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) {
@@ -79,6 +131,8 @@ export function useAuth() {
     supabaseUser,
     loading,
     signInWithGoogle,
+    signInWithEmail,
+    signUpWithEmail,
     signOut,
   };
 }

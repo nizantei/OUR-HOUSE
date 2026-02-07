@@ -157,6 +157,7 @@ export interface Present {
   bedroom_id: string;
   type: PresentType;
   content: string;
+  gift_subtype?: string;
   given_by: string;
   given_at: string;
   opened: boolean;

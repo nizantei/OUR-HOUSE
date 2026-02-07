@@ -3,16 +3,23 @@ import { RoomNavMenu } from '../shared/RoomNavMenu';
 
 interface RoomContainerProps {
   children: ReactNode;
+  bottomPanel?: ReactNode;
 }
 
-export function RoomContainer({ children }: RoomContainerProps) {
+export function RoomContainer({ children, bottomPanel }: RoomContainerProps) {
   return (
-    <div className="min-h-screen bg-warmth-50 flex flex-col">
-      <div className="flex-1 flex items-center justify-center px-4 py-8">
-        <div className="w-full max-w-7xl aspect-[5/3] relative">
-          {children}
-        </div>
+    <div className="min-h-[100dvh] bg-warmth-50 flex flex-col">
+      {/* Scene area - fills width, auto height via SVG aspect ratio */}
+      <div className="w-full max-w-5xl mx-auto relative flex-shrink-0">
+        {children}
       </div>
+
+      {/* Bottom panel - scrollable area below scene on mobile */}
+      {bottomPanel && (
+        <div className="flex-1 w-full max-w-5xl mx-auto px-4 py-4 overflow-y-auto">
+          {bottomPanel}
+        </div>
+      )}
 
       {/* Floating Room Navigation Menu */}
       <RoomNavMenu />

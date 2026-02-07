@@ -24,8 +24,8 @@ export function GardenScene({
   return (
     <svg
       viewBox="0 0 1000 600"
-      preserveAspectRatio="xMidYMid meet"
-      className="w-full h-full"
+      preserveAspectRatio="xMidYMid slice"
+      className="absolute inset-0 w-full h-full"
       role="img"
       aria-label="Garden illustration"
     >

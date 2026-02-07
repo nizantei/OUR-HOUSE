@@ -8,15 +8,15 @@ interface RoomContainerProps {
 
 export function RoomContainer({ children, bottomPanel }: RoomContainerProps) {
   return (
-    <div className="min-h-[100dvh] bg-warmth-50 flex flex-col">
-      {/* Scene area - fills width, auto height via SVG aspect ratio */}
-      <div className="w-full max-w-5xl mx-auto relative flex-shrink-0">
+    <div className="h-[100dvh] bg-warmth-50 flex flex-col overflow-hidden">
+      {/* Scene area - fills all available vertical space */}
+      <div className="flex-1 min-h-0 w-full overflow-hidden relative">
         {children}
       </div>
 
-      {/* Bottom panel - scrollable area below scene on mobile */}
+      {/* Bottom panel - compact bar at bottom */}
       {bottomPanel && (
-        <div className="flex-1 w-full max-w-5xl mx-auto px-4 py-4 overflow-y-auto">
+        <div className="flex-shrink-0 w-full bg-warmth-50/95 backdrop-blur-sm border-t border-warmth-200 px-4 py-3 max-h-[28vh] overflow-y-auto">
           {bottomPanel}
         </div>
       )}

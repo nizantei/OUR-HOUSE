@@ -1,3 +1,5 @@
+import React from 'react';
+
 interface FlowerSVGProps {
   flowerType: string;
   x: number;
@@ -197,7 +199,7 @@ function Lily() {
   );
 }
 
-const flowerComponents: Record<string, () => JSX.Element> = {
+const flowerComponents: Record<string, () => React.ReactElement> = {
   rose: Rose,
   sunflower: Sunflower,
   tulip: Tulip,

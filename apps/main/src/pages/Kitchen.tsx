@@ -9,13 +9,12 @@ import { NoteEditorModal } from '../components/rooms/kitchen/notes/NoteEditorMod
 import { MagnetPicker } from '../components/rooms/kitchen/magnets/MagnetPicker';
 import { Button } from '../components/ui/Button';
 import type { StickyNoteType, StickyNoteContent, StickyNote } from '@our-house/shared/types';
-import { supabase } from '@our-house/shared/lib/supabase';
 
 export function Kitchen() {
   const { house } = useHouseStore();
   const { kitchen, loading } = useKitchen(house?.id);
-  const { stickyNotes, createNote, updateNote, deleteNote, updateNotePosition } = useStickyNotes(kitchen?.id);
-  const { magnets, addMagnet, removeMagnet, updateMagnetPosition } = useMagnets(kitchen?.id);
+  const { stickyNotes, createNote, updateNote, updateNotePosition } = useStickyNotes(kitchen?.id);
+  const { magnets, addMagnet, updateMagnetPosition } = useMagnets(kitchen?.id);
   const svgRef = useRef<SVGSVGElement>(null);
 
   const [showNoteEditor, setShowNoteEditor] = useState(false);
@@ -35,35 +34,6 @@ export function Kitchen() {
       await updateNote(editingNote.id, { type, content, color });
     } else {
       await createNote(type, content, color, {
-        x: 400 + Math.random() * 200,
-        y: 200 + Math.random() * 200,
-      });
-    }
-    setShowNoteEditor(false);
-    setEditingNote(null);
-  };
-
-  const handleDoodleSave = async (blob: Blob) => {
-    if (!kitchen) return;
-    const fileName = `doodle-${Date.now()}.png`;
-    const { error: uploadError } = await supabase.storage
-      .from('doodle-images')
-      .upload(fileName, blob, { cacheControl: '3600', upsert: false });
-
-    if (uploadError) {
-      console.error('Error uploading doodle:', uploadError);
-      return;
-    }
-
-    const { data: { publicUrl } } = supabase.storage
-      .from('doodle-images')
-      .getPublicUrl(fileName);
-
-    const content: StickyNoteContent = { imageUrl: publicUrl };
-    if (editingNote) {
-      await updateNote(editingNote.id, { content });
-    } else {
-      await createNote('doodle', content, '#FFF9C4', {
         x: 400 + Math.random() * 200,
         y: 200 + Math.random() * 200,
       });

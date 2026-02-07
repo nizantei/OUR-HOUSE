@@ -1,3 +1,4 @@
+import React from 'react';
 import type { StickyNote as StickyNoteType } from '@our-house/shared/types';
 
 interface StickyNoteProps {
@@ -21,7 +22,7 @@ function renderPreviewContent(note: StickyNoteType): string {
   return '';
 }
 
-function renderDoodleIcon(): JSX.Element {
+function renderDoodleIcon(): React.ReactElement {
   return (
     <g>
       {/* Simple pencil icon to indicate a doodle */}

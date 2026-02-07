@@ -35,7 +35,7 @@ export function GalleryScene({
     >
       <defs>
         {/* Spotlight radial gradients */}
-        {spotlights.map((spot, i) => (
+        {spotlights.map((_spot, i) => (
           <radialGradient
             key={`spotlight-${i}`}
             id={`spotlight-grad-${i}`}

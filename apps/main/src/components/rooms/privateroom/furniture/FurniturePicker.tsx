@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Modal } from '../../../../components/rooms/shared/Modal';
 import {
   FURNITURE_CATEGORIES,
-  furnitureDefinitions,
   getFurnitureByCategory,
   renderFurnitureSVG,
 } from './furnitureLibrary';

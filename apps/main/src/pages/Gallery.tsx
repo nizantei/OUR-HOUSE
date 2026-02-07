@@ -14,49 +14,49 @@ import type { Album } from '@our-house/shared/types';
 export function Gallery() {
   const { house } = useHouseStore();
   const { gallery, loading } = useGallery(house?.id);
-  const { wallImages, uploadWallImage, updateImagePosition, deleteWallImage } = useWallImages(gallery?.id);
+  const { wallImages, uploadWallImage } = useWallImages(gallery?.id);
   const {
     albums,
     currentAlbumPhotos,
     createAlbum,
-    deleteAlbum,
     fetchAlbumPhotos,
     uploadPhoto,
-    deletePhoto,
   } = useAlbums(gallery?.id);
 
   const svgRef = useRef<SVGSVGElement>(null);
   const [selectedAlbum, setSelectedAlbum] = useState<Album | null>(null);
   const [showCreateAlbum, setShowCreateAlbum] = useState(false);
-  const [showUploadToWall, setShowUploadToWall] = useState(false);
   const [newAlbumName, setNewAlbumName] = useState('');
 
-  const handleFrameClick = (slotIndex: number) => {
-    // Check if the frame slot already has an image
-    const slot = galleryConfig.frameSlots[slotIndex];
-    const existing = wallImages.find(
-      (img) => img.position_x === slot.x && img.position_y === slot.y
+  const handleFrameClick = (id?: string) => {
+    // If clicked frame already has an image, do nothing for now
+    if (id) return;
+
+    // Find the first empty frame slot
+    const emptySlot = galleryConfig.frameSlots.find((slot) =>
+      !wallImages.some((img) => img.position_x === slot.x && img.position_y === slot.y)
     );
-    if (!existing) {
-      // Open file picker for this empty frame
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = 'image/*';
-      input.onchange = async (e) => {
-        const file = (e.target as HTMLInputElement).files?.[0];
-        if (file) {
-          try {
-            await uploadWallImage(file, { x: slot.x, y: slot.y });
-          } catch (err) {
-            console.error('Error uploading wall image:', err);
-          }
+    if (!emptySlot) return;
+
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        try {
+          await uploadWallImage(file, { x: emptySlot.x, y: emptySlot.y });
+        } catch (err) {
+          console.error('Error uploading wall image:', err);
         }
-      };
-      input.click();
-    }
+      }
+    };
+    input.click();
   };
 
-  const handleAlbumClick = async (album: Album) => {
+  const handleAlbumClick = async (albumId: string) => {
+    const album = albums.find((a) => a.id === albumId);
+    if (!album) return;
     await fetchAlbumPhotos(album.id);
     setSelectedAlbum(album);
   };
@@ -151,7 +151,7 @@ export function Gallery() {
             {albums.map((album) => (
               <button
                 key={album.id}
-                onClick={() => handleAlbumClick(album)}
+                onClick={() => handleAlbumClick(album.id)}
                 className="p-3 rounded-lg bg-warmth-100 text-left text-sm transition-colors hover:bg-warmth-200"
               >
                 <span className="text-warmth-900 font-medium truncate block">
@@ -176,8 +176,6 @@ export function Gallery() {
         svgRef={svgRef}
         onFrameClick={handleFrameClick}
         onAlbumClick={handleAlbumClick}
-        onImageDragEnd={updateImagePosition}
-        onDeleteImage={deleteWallImage}
       />
 
       {selectedAlbum && (
@@ -185,12 +183,7 @@ export function Gallery() {
           album={selectedAlbum}
           photos={currentAlbumPhotos}
           onClose={() => setSelectedAlbum(null)}
-          onUploadPhoto={handleUploadPhotoToAlbum}
-          onDeletePhoto={deletePhoto}
-          onDeleteAlbum={async () => {
-            await deleteAlbum(selectedAlbum.id);
-            setSelectedAlbum(null);
-          }}
+          onUpload={handleUploadPhotoToAlbum}
         />
       )}
 

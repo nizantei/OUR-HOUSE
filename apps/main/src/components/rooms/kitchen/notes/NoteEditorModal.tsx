@@ -62,7 +62,7 @@ export function NoteEditorModal({ note, onSave, onClose }: NoteEditorModalProps)
   const [checklistItems, setChecklistItems] = useState<ChecklistItem[]>(
     getInitialChecklistItems(note)
   );
-  const [doodleBlob, setDoodleBlob] = useState<Blob | null>(null);
+  const [_doodleBlob, setDoodleBlob] = useState<Blob | null>(null);
 
   const isEditing = !!note;
   const title = isEditing ? 'Edit Note' : 'New Note';

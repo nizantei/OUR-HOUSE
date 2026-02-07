@@ -54,6 +54,7 @@ export function KitchenScene({
         <DraggableMagnet
           key={magnet.id}
           magnet={magnet}
+          svgRef={svgRef}
           onDragEnd={onMagnetDragEnd}
         />
       ))}
@@ -63,6 +64,7 @@ export function KitchenScene({
         <DraggableStickyNote
           key={note.id}
           note={note}
+          svgRef={svgRef}
           onClick={onNoteClick}
           onDragEnd={onNoteDragEnd}
         />

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Modal } from '../../../rooms/shared/Modal';
-import { MAGNET_CATEGORIES, magnetDefinitions, getMagnetsByCategory, renderMagnetSVG } from './magnetLibrary';
+import { MAGNET_CATEGORIES, getMagnetsByCategory, renderMagnetSVG } from './magnetLibrary';
 
 interface MagnetPickerProps {
   onSelect: (magnetType: string) => void;
@@ -8,7 +8,7 @@ interface MagnetPickerProps {
 }
 
 export function MagnetPicker({ onSelect, onClose }: MagnetPickerProps) {
-  const [activeCategory, setActiveCategory] = useState<string>(MAGNET_CATEGORIES[0]);
+  const [activeCategory, setActiveCategory] = useState(MAGNET_CATEGORIES[0]);
   const filteredMagnets = getMagnetsByCategory(activeCategory);
 
   return (

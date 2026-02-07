@@ -27,7 +27,7 @@ export function useSVGDrag(initialX: number, initialY: number, options: UseSVGDr
   const { svgRef, onDragEnd, bounds } = options;
   const [state, setState] = useState<DragState>({ isDragging: false, x: initialX, y: initialY });
   const offsetRef = useRef({ dx: 0, dy: 0 });
-  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const clamp = useCallback((x: number, y: number) => {
     if (!bounds) return { x, y };
@@ -60,7 +60,7 @@ export function useSVGDrag(initialX: number, initialY: number, options: UseSVGDr
     setState((s) => ({ ...s, x: newPos.x, y: newPos.y }));
   }, [state.isDragging, svgRef, clamp]);
 
-  const handlePointerUp = useCallback((e: React.PointerEvent) => {
+  const handlePointerUp = useCallback((_e: React.PointerEvent) => {
     if (!state.isDragging) return;
     setState((s) => ({ ...s, isDragging: false }));
 

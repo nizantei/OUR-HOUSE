@@ -173,7 +173,9 @@ export function Garden() {
       <GardenScene
         growthStage={growthStage}
         isWatering={isWatering}
+        canWater={canWater()}
         flowers={flowers}
+        onWater={waterPlant}
       />
 
       {showFlowerModal && (

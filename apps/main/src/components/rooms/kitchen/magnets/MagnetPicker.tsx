@@ -8,7 +8,7 @@ interface MagnetPickerProps {
 }
 
 export function MagnetPicker({ onSelect, onClose }: MagnetPickerProps) {
-  const [activeCategory, setActiveCategory] = useState(MAGNET_CATEGORIES[0]);
+  const [activeCategory, setActiveCategory] = useState<(typeof MAGNET_CATEGORIES)[number]>(MAGNET_CATEGORIES[0]);
   const filteredMagnets = getMagnetsByCategory(activeCategory);
 
   return (
